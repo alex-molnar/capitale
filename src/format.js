@@ -5,6 +5,7 @@ function format(str, ...values) {
 }
 
 guessTemplate = `
+<div class="guess-header">{10}</div>
 <div class="guess-row">
     <div class="guess-circle {0}" id="guess-hemisphere">{1}</div>
     <div class="guess-circle {2}" id="guess-continent">{3}</div>
@@ -25,6 +26,7 @@ function formatDiff(diff) {
         diff.distanceClass, 
         diff.distance, 
         diff.directionClass, 
-        diff.direction
+        diff.direction,
+        diff.guess
     );
 }

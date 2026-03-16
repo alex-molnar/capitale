@@ -27,6 +27,19 @@
     margin-top: 16px;
 }
 
+.guess-header {
+    width: 500px;
+    font-weight: 600;
+    font-size: 0.9em;
+    color: #666;
+    margin-bottom: 0px;
+    margin-top: 10px;
+    padding-bottom: 0%;
+    padding-left: 30px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
 .guess-circle.good {
     background-color: #00a629;
     border-color: #00a629;

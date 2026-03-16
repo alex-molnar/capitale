@@ -43,11 +43,12 @@ function displayNewGuessRow(guess) {
         distanceClass: distance.distanceClass, 
         distance: `${distance.distance} km`, 
         directionClass: direction.directionClass,
-        direction: direction.direction
+        direction: direction.direction,
+        guess: `${already_guessed.length}. ${guess}`
     })
     document.getElementById("guesses-container").innerHTML += formattedDiff
 
-    if(already_guessed.length > 5) {
+    if(already_guessed.length > 4) {
         let scroller = document.getElementById("guesses-container")
         scroller.style.overflowY = "scroll"
         scroller.style.paddingRight = "10px"
