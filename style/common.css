@@ -17,17 +17,14 @@ body {
 
 #header-container {
     top: 0;
-    border: 2px solid green;
 }
 
 #guesses-container {
     top: 10%;
-    border: 2px solid orange;
     overflow-x: hidden;
 }
 
 #input-container {
     position: relative;
     bottom: 0;
-    border: 2px solid blue;
 }
