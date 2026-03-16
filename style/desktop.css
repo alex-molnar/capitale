@@ -1,3 +1,46 @@
+.guess-circle {
+    width: 80px;
+    height: 80px;
+    background: #f9fafc;
+    border: 2px solid #d1d1d1;
+    border-radius: 50%;
+    box-shadow: 0 2px 8px 0 rgba(0,0,0,0.10);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 4px;
+    font-size: 0.9em;
+    color: #3a3a3a;
+    transition: box-shadow 0.2s;
+    color: white;
+}
+.guess-circle:hover {
+    box-shadow: 0 4px 16px 0 rgba(0,0,0,0.18);
+}
+.guess-row {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    align-items: center;
+    justify-items: center;
+    width: 500px;
+    margin-top: 16px;
+}
+.guess-circle.good {
+    background-color: #00a629;
+    border-color: #00a629;
+}
+.guess-circle.bad {
+    background-color: #c20a0a;
+    border-color: #c20a0a;
+}
+.guess-circle.mid {
+    background-color: #cec105;
+    border-color: #d5b902;
+}
+.guess-circle.natural {
+    background-color: #0b74de;
+    border-color: #0b74de;
+}
 #header-container {
     width: 500px;
     height: 100px;
