@@ -4,12 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Capitale</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
-    <script src="data.js"></script>
-    <script src="random.js"></script>
-    <script src="capitale.js"></script>
+
+    <link rel="stylesheet" href="style/common.css">
+    <link rel="stylesheet" media="screen and (min-width: 500px) and (min-height: 750px)" href="style/desktop.css">
+    <link rel="stylesheet" media="screen and (max-aspect-ratio: 3/4)" href="style/mobile.css">
+
+    <script src="src/data.js"></script>
+    <script src="src/random.js"></script>
+    <script src="src/capitale.js"></script>
 </head>
 <body>
-    <div id="temp"></div>
+    <div id="main-container">
+        <div id="header-container">
+            <div class="header" id="header-hemisphere" style="left: 0px;"></div>
+            <div class="header" id="header-continent" style="left: 100px;"></div>
+            <div class="header" id="header-population" style="left: 200px;"></div>
+            <div class="header" id="header-distance" style="left: 300px;"></div>
+            <div class="header" id="header-direction" style="left: 400px;"></div>
+        </div>
+        
+        <div id="guesses-container"></div>
+
+        <div id="input-container">
+            <input type="text" id="guess-input" placeholder="Write and Select a city">
+            <button id="submit-button">Submit</button>
+        </div>
+    </div>
 </body>
 </html>

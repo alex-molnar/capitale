@@ -104,13 +104,13 @@ with open('concap.csv', 'r') as concap_f:
             if gist_k not in concaps:
                 print(f'{gist_k} ({gist_v.Country}) is in gist but not in concap')
 
-                with open('data.js', 'w') as data_f:
+                with open('src/data.js', 'w') as data_f:
                     data_f.write("const capitals_data = {\n")
                     data_f.write(',\n'.join(map(lambda c: c.asJson(), capitals)))
                     data_f.write('\n}\n')
                     data_f.write('\nconst capitals = Object.keys(capitals_data);\n')
 
-                with open('random.js', 'w') as random_f:
+                with open('src/random.js', 'w') as random_f:
                     today = datetime.today() #.strftime('%Y-%m-%d')
                     shuffle(capitals)
                     random_f.write("const capitalForTheDay = {\n")

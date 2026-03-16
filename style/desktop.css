@@ -1,0 +1,54 @@
+#header-container {
+    width: 500px;
+    height: 100px;
+}
+
+#guesses-container {
+    width: 500px;
+    height: 570px;
+}
+
+#input-container {
+    width: 500px;
+    height: 80px;
+}
+
+#header-container {
+    width: 500px;
+    height: 100px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header {
+    text-align: center;
+    border: 1px solid darkmagenta;
+    height: 100px;
+    width: 90px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    margin: 0 2px;
+}
+
+#submit-button {
+    position: absolute;
+    height: 50px;
+    top: 15px;
+    width: 150px;
+    right: 25px;
+    cursor: pointer;
+    font-size: 24px;
+}
+
+#guess-input {
+    position: absolute;
+    width: 250px;
+    top: 15px;
+    height: 50px;
+    left: 25px;
+    font-size: 20px;
+}
