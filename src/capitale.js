@@ -27,6 +27,14 @@ function searchForCapital(e) {
     }
 }
 
+function makeScrollable(div) {
+    div.style.overflowY = "scroll"
+    div.style.paddingRight = "10px"
+    document.getElementById("header-container").style.paddingRight = "10px"
+    document.getElementById("input-container").style.paddingRight = "10px"
+    div.scrollTop = div.scrollHeight
+}
+
 function displayNewGuessRow(guess) {
     let guessed_capital = capitals_data[guess]
 
@@ -50,16 +58,19 @@ function displayNewGuessRow(guess) {
 
     if(already_guessed.length > 4) {
         let scroller = document.getElementById("guesses-container")
-        scroller.style.overflowY = "scroll"
-        scroller.style.paddingRight = "10px"
-        scroller.scrollTop = scroller.scrollHeight
-        document.getElementById("header-container").style.paddingRight = "10px"
-        document.getElementById("input-container").style.paddingRight = "10px"
+        makeScrollable(scroller)
     }
 }
 
 function displayWinningGuessRow() {
-    console.log("You win!")
+    let formattedDiff = formatWinningDiff(todays_capital, already_guessed.length + 1)
+    document.getElementById("guesses-container").innerHTML += formattedDiff
+    
+    if(already_guessed.length >= 4) {
+        let scroller = document.getElementById("guesses-container")
+        makeScrollable(scroller)
+    }
+    
     document.getElementById('guess-input').disabled = true;
     document.getElementById('guess-input').style.cursor = "not-allowed";
     document.getElementById('submit-button').disabled = true;

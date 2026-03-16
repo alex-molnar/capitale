@@ -11,7 +11,7 @@ guessTemplate = `
     <div class="guess-circle {2}" id="guess-continent">{3}</div>
     <div class="guess-circle {4}" id="guess-population">{5}</div>
     <div class="guess-circle {6}" id="guess-distance">{7}</div>
-    <div class="guess-circle natural {8}" id="guess-direction">{9}</div>
+    <div class="guess-circle {8}" id="guess-direction">{9}</div>
 </div>`
 
 function formatDiff(diff) {
@@ -25,8 +25,25 @@ function formatDiff(diff) {
         diff.population, 
         diff.distanceClass, 
         diff.distance, 
-        diff.directionClass, 
+        `natural ${diff.directionClass}`, 
         diff.direction,
         diff.guess
+    );
+}
+
+function formatWinningDiff(diff, no) {
+    return format(
+        guessTemplate, 
+        "good", 
+        diff.hemisphere, 
+        "good", 
+        diff.continent, 
+        "good", 
+        diff.pretty_population,
+        "good",
+        "0 km",
+        "good",
+        "",
+        `${no}. ${diff.name}`
     );
 }
