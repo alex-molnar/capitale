@@ -1488,8 +1488,8 @@ const capitals_data = {
         "name": "Pristina (Kosovo)",
         "hemisphere": "Northern",
         "continent": "Europe",
-        "population": 227,
-        "pretty_population": "227",
+        "population": 227466,
+        "pretty_population": "227k",
         "latitude": 42.6666666666667,
         "longitude": 21.166667
     },

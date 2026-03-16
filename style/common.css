@@ -23,6 +23,7 @@ body {
 #guesses-container {
     top: 10%;
     border: 2px solid orange;
+    overflow-x: hidden;
 }
 
 #input-container {

@@ -25,10 +25,36 @@ function searchForCapital(e) {
     } else {
         document.getElementById("suggestions").innerHTML = ""
     }
-} 
+}
 
 function displayNewGuessRow(guess) {
-    console.log(guess)
+    let guessed_capital = capitals_data[guess]
+
+    let distance = mathDistance(guessed_capital.latitude, guessed_capital.longitude, todays_capital.latitude, todays_capital.longitude)
+    let direction = getDirectionClass(Math.atan2(guessed_capital.longitude - todays_capital.longitude, guessed_capital.latitude - todays_capital.latitude) * 180 / Math.PI)
+
+    let formattedDiff = formatDiff({
+        hemisphereClass: guessed_capital.hemisphere === todays_capital.hemisphere ? "good" : "bad",
+        hemisphere: guessed_capital.hemisphere,
+        continentClass: guessed_capital.continent === todays_capital.continent ? "good" : "bad",
+        continent: guessed_capital.continent,
+        populationClass: guessed_capital.pretty_population === todays_capital.pretty_population ? "good" : getPopulationClass(guessed_capital.population, todays_capital.population),
+        population: guessed_capital.pretty_population,
+        distanceClass: distance.distanceClass, 
+        distance: `${distance.distance} km`, 
+        directionClass: direction.directionClass,
+        direction: direction.direction
+    })
+    document.getElementById("guesses-container").innerHTML += formattedDiff
+
+    if(already_guessed.length > 5) {
+        let scroller = document.getElementById("guesses-container")
+        scroller.style.overflowY = "scroll"
+        scroller.style.paddingRight = "10px"
+        scroller.scrollTop = scroller.scrollHeight
+        document.getElementById("header-container").style.paddingRight = "10px"
+        document.getElementById("input-container").style.paddingRight = "10px"
+    }
 }
 
 function displayWinningGuessRow() {
@@ -50,8 +76,8 @@ function submitGuess(e) {
         displayWinningGuessRow()
         guessInput.value = ""
     } else {
-        displayNewGuessRow(guess)
         already_guessed.push(guess)
+        displayNewGuessRow(guess)
         guessInput.value = ""
     }
     document.getElementById("suggestions").innerHTML = ""
