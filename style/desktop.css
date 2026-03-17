@@ -13,6 +13,12 @@
     color: #3a3a3a;
     transition: box-shadow 0.2s;
     color: white;
+    flex-wrap: wrap;
+    padding: 8px;
+    box-sizing: border-box;
+    text-align: center;
+    overflow-wrap: break-word;
+    word-break: break-word;
 }
 .guess-circle:hover {
     box-shadow: 0 4px 16px 0 rgba(0,0,0,0.18);
