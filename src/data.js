@@ -2035,4 +2035,4 @@ const capitals_data = {
     }
 }
 
-const capitals = Object.keys(capitals_data);
+const capitals = Object.keys(capitals_data).sort();

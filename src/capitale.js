@@ -1,17 +1,32 @@
 let already_guessed = []
-let todays_capital
+let currentDate = new Date().toJSON().slice(0, 10);
+let todays_capital_name = capitalForTheDay[currentDate];
+let todays_capital = capitals_data[todays_capital_name]
+
+function getAlreadyGuessedToday(date) {
+    if (localStorage.getItem(date) != null) {
+        already_guessed = JSON.parse(localStorage.getItem(date))
+    } else {
+        localStorage.clear()
+        already_guessed = []
+        localStorage.setItem(date, JSON.stringify(already_guessed))
+    }
+}
 
 function loadCapitale() {
-    let currentDate = new Date().toJSON().slice(0, 10);
-    let todays_capital_name = capitalForTheDay[currentDate]
-    todays_capital = capitals_data[todays_capital_name]
-    document.getElementById("guess-input").addEventListener("input", searchForCapital)
-    document.getElementById("guess-input").addEventListener("keypress", (e) => {
-        if (e.key === "Enter") {
-            submitGuess(e)
-        }
-    })
-    document.getElementById("submit-button").addEventListener("click", submitGuess)
+    getAlreadyGuessedToday(currentDate)
+    already_guessed.filter(guess => guess !== todays_capital_name).forEach((guess, index) => displayNewGuessRow(guess, index + 1))
+    if (already_guessed.includes(todays_capital_name)) {
+        displayWinningGuessRow()
+    } else {
+        document.getElementById("guess-input").addEventListener("input", searchForCapital)
+        document.getElementById("guess-input").addEventListener("keypress", (e) => {
+            if (e.key === "Enter") {
+                submitGuess(e)
+            }
+        })
+        document.getElementById("submit-button").addEventListener("click", submitGuess)
+    }
 }
 
 function searchForCapital(e) {
@@ -20,7 +35,6 @@ function searchForCapital(e) {
         let filteredCapitals = capitals
             .filter(capital => capital.toLowerCase().includes(guess.toLowerCase()))
             .filter(capital => !already_guessed.includes(capital))
-            .sort()
         document.getElementById("suggestions").innerHTML = filteredCapitals.map(capital => `<option value="${capital}">`).join('')
     } else {
         document.getElementById("suggestions").innerHTML = ""
@@ -35,7 +49,7 @@ function makeScrollable(div) {
     div.scrollTop = div.scrollHeight
 }
 
-function displayNewGuessRow(guess) {
+function displayNewGuessRow(guess, no = already_guessed.length) {
     let guessed_capital = capitals_data[guess]
 
     let distance = mathDistance(guessed_capital.latitude, guessed_capital.longitude, todays_capital.latitude, todays_capital.longitude)
@@ -52,7 +66,7 @@ function displayNewGuessRow(guess) {
         distance: `${distance.distance} km`, 
         directionClass: direction.directionClass,
         direction: direction.direction,
-        guess: `${already_guessed.length}. ${guess}`
+        guess: `${no}. ${guess}`
     })
     document.getElementById("guesses-container").innerHTML += formattedDiff
 
@@ -63,10 +77,10 @@ function displayNewGuessRow(guess) {
 }
 
 function displayWinningGuessRow() {
-    let formattedDiff = formatWinningDiff(todays_capital, already_guessed.length + 1)
+    let formattedDiff = formatWinningDiff(todays_capital, already_guessed.length)
     document.getElementById("guesses-container").innerHTML += formattedDiff
     
-    if(already_guessed.length >= 4) {
+    if(already_guessed.length > 4) {
         let scroller = document.getElementById("guesses-container")
         makeScrollable(scroller)
     }
@@ -85,10 +99,13 @@ function submitGuess(e) {
     } else if (already_guessed.includes(guess)) {
         alert("You have already guessed this city")
     } else if (guess === todays_capital.name) {
+        already_guessed.push(guess)
+        localStorage.setItem(currentDate, JSON.stringify(already_guessed))
         displayWinningGuessRow()
         guessInput.value = ""
     } else {
         already_guessed.push(guess)
+        localStorage.setItem(currentDate, JSON.stringify(already_guessed))
         displayNewGuessRow(guess)
         guessInput.value = ""
     }
