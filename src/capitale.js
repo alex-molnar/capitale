@@ -49,7 +49,7 @@ function makeScrollable(div) {
     div.scrollTop = div.scrollHeight
 }
 
-function displayNewGuessRow(guess, no = already_guessed.length) {
+function displayNewGuessRow(guess, no = already_guessed.length, isNew = false) {
     let guessed_capital = capitals_data[guess]
 
     let distance = mathDistance(guessed_capital.latitude, guessed_capital.longitude, todays_capital.latitude, todays_capital.longitude)
@@ -62,11 +62,12 @@ function displayNewGuessRow(guess, no = already_guessed.length) {
         continent: guessed_capital.continent,
         populationClass: guessed_capital.pretty_population === todays_capital.pretty_population ? "good" : getPopulationClass(guessed_capital.population, todays_capital.population),
         population: guessed_capital.pretty_population,
-        distanceClass: distance.distanceClass, 
-        distance: `${distance.distance} km`, 
+        distanceClass: distance.distanceClass,
+        distance: `${distance.distance} km`,
         directionClass: direction.directionClass,
         direction: direction.direction,
-        guess: `${no}. ${guess}`
+        guess: `${no}. ${guess}`,
+        rowClass: isNew ? "new" : ""
     })
     document.getElementById("guesses-container").innerHTML += formattedDiff
 
@@ -76,8 +77,8 @@ function displayNewGuessRow(guess, no = already_guessed.length) {
     }
 }
 
-function displayWinningGuessRow() {
-    let formattedDiff = formatWinningDiff(todays_capital, already_guessed.length)
+function displayWinningGuessRow(isNew = false) {
+    let formattedDiff = formatWinningDiff(todays_capital, already_guessed.length, isNew ? "new winning" : "winning")
     document.getElementById("guesses-container").innerHTML += formattedDiff
     
     if(already_guessed.length > 4) {
@@ -101,12 +102,12 @@ function submitGuess(e) {
     } else if (guess === todays_capital.name) {
         already_guessed.push(guess)
         localStorage.setItem(currentDate, JSON.stringify(already_guessed))
-        displayWinningGuessRow()
+        displayWinningGuessRow(true)
         guessInput.value = ""
     } else {
         already_guessed.push(guess)
         localStorage.setItem(currentDate, JSON.stringify(already_guessed))
-        displayNewGuessRow(guess)
+        displayNewGuessRow(guess, already_guessed.length, true)
         guessInput.value = ""
     }
     document.getElementById("suggestions").innerHTML = ""

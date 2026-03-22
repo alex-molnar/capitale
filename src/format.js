@@ -6,7 +6,7 @@ function format(str, ...values) {
 
 guessTemplate = `
 <div class="guess-header">{10}</div>
-<div class="guess-row">
+<div class="guess-row {11}">
     <div class="guess-circle {0}" id="guess-hemisphere">{1}</div>
     <div class="guess-circle {2}" id="guess-continent">{3}</div>
     <div class="guess-circle {4}" id="guess-population">{5}</div>
@@ -27,23 +27,25 @@ function formatDiff(diff) {
         diff.distance, 
         `natural ${diff.directionClass}`, 
         diff.direction,
-        diff.guess
+        diff.guess,
+        diff.rowClass || ""
     );
 }
 
-function formatWinningDiff(diff, no) {
+function formatWinningDiff(diff, no, rowClass = "winning") {
     return format(
-        guessTemplate, 
-        "good", 
-        diff.hemisphere, 
-        "good", 
-        diff.continent, 
-        "good", 
+        guessTemplate,
+        "good",
+        diff.hemisphere,
+        "good",
+        diff.continent,
+        "good",
         diff.pretty_population,
         "good",
         "0 km",
         "good",
         "",
-        `${no}. ${diff.name}`
+        `${no}. ${diff.name}`,
+        rowClass
     );
 }

@@ -16,6 +16,15 @@ body {
     overflow-x: hidden;
 }
 
+#game-title {
+    font-size: 2.2rem;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #3a3a3a;
+    margin: 0 0 12px 0;
+}
+
 #header-container {
     top: 0;
 }
@@ -50,6 +59,17 @@ body {
     box-shadow: 0 4px 16px 0 rgba(0,0,0,0.18);
 }
 
+@keyframes flip-in {
+    0%   { transform: perspective(400px) rotateY(90deg); opacity: 0; }
+    100% { transform: perspective(400px) rotateY(0deg);  opacity: 1; }
+}
+
+@keyframes bounce-win {
+    0%, 100% { transform: scale(1); }
+    40%       { transform: scale(1.18); }
+    70%       { transform: scale(0.92); }
+}
+
 .guess-circle {
     background: #f9fafc;
     border: 2px solid #d1d1d1;
@@ -68,6 +88,24 @@ body {
     overflow-wrap: break-word;
     word-break: break-word;
 }
+
+.guess-row.new .guess-circle {
+    animation: flip-in 0.35s ease-out both;
+}
+.guess-row.new .guess-circle:nth-child(1) { animation-delay: 0.00s; }
+.guess-row.new .guess-circle:nth-child(2) { animation-delay: 0.10s; }
+.guess-row.new .guess-circle:nth-child(3) { animation-delay: 0.20s; }
+.guess-row.new .guess-circle:nth-child(4) { animation-delay: 0.30s; }
+.guess-row.new .guess-circle:nth-child(5) { animation-delay: 0.40s; }
+
+.guess-row.new.winning .guess-circle {
+    animation: flip-in 0.35s ease-out both, bounce-win 0.45s ease-in-out both;
+}
+.guess-row.new.winning .guess-circle:nth-child(1) { animation-delay: 0.00s, 0.80s; }
+.guess-row.new.winning .guess-circle:nth-child(2) { animation-delay: 0.10s, 0.90s; }
+.guess-row.new.winning .guess-circle:nth-child(3) { animation-delay: 0.20s, 1.00s; }
+.guess-row.new.winning .guess-circle:nth-child(4) { animation-delay: 0.30s, 1.10s; }
+.guess-row.new.winning .guess-circle:nth-child(5) { animation-delay: 0.40s, 1.20s; }
 .guess-circle:hover {
     box-shadow: 0 4px 16px 0 rgba(0,0,0,0.18);
 }
@@ -82,7 +120,7 @@ body {
 .guess-header {
     font-weight: 600;
     color: #666;
-    margin-bottom: 0px;
+    margin-bottom: 4px;
     margin-top: 10px;
     padding-bottom: 0%;
     padding-left: 30px;
@@ -239,6 +277,70 @@ body {
     border-bottom: 7px solid #fff;
     z-index: 2;
     filter: drop-shadow(0 1px 2px rgba(0,0,0,0.10));
+}
+
+.guess-row.new.winning .guess-circle:nth-child(5) {
+    flex-direction: column;
+    gap: 2px;
+}
+
+.guess-row.new.winning .guess-circle:nth-child(5)::before {
+    content: '📍';
+    position: static;
+    width: auto;
+    height: auto;
+    border: none;
+    font-size: 0.9em;
+    line-height: 1;
+    filter: none;
+}
+
+#ad-banner {
+    width: 40%;
+    height: 130px;
+    margin-top: 12px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+}
+
+#ad-banner img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+#ad-sidebar-left {
+    position: fixed;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 300px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+}
+
+#ad-sidebar-left img {
+    width: 100%;
+    display: block;
+}
+
+#ad-sidebar {
+    position: fixed;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 300px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+}
+
+#ad-sidebar img {
+    width: 100%;
+    display: block;
 }
 
 #submit-button {
