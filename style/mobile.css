@@ -51,19 +51,20 @@
 #submit-button {
     height: 70%;
     width: 22%;
-    position: relative;
-    bottom: auto;
-    right: auto;
     flex-shrink: 0;
     font-size: 3.5vw;
+}
+
+#hint-button {
+    height: 70%;
+    width: calc(0.7 * 10vh);
+    flex-shrink: 0;
+    font-size: 5vw;
 }
 
 #guess-input {
     height: 70%;
     flex: 1;
-    position: relative;
-    bottom: auto;
-    left: auto;
     min-width: 0;
     font-size: 4vw;
 }

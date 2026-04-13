@@ -36,6 +36,7 @@ function loadCapitale() {
             }
         })
         document.getElementById("submit-button").addEventListener("click", submitGuess)
+        document.getElementById("hint-button").addEventListener("click", showSolution)
     }
 }
 
@@ -99,6 +100,18 @@ function displayWinningGuessRow() {
     document.getElementById('guess-input').style.cursor = "not-allowed";
     document.getElementById('submit-button').disabled = true;
     document.getElementById('submit-button').style.cursor = "not-allowed";
+    document.getElementById('hint-button').disabled = true;
+    document.getElementById('hint-button').style.cursor = "not-allowed";
+}
+
+function showSolution() {
+    if (!already_guessed.includes(todays_capital_name)) {
+        already_guessed.push(todays_capital_name)
+        localStorage.setItem(currentDate, JSON.stringify(already_guessed))
+        displayWinningGuessRow()
+        document.getElementById("guess-input").value = ""
+        document.getElementById("suggestions").innerHTML = ""
+    }
 }
 
 function submitGuess(e) {

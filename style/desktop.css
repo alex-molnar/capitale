@@ -8,6 +8,11 @@
     position: relative;
     width: 500px;
     height: 80px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 25px;
+    box-sizing: border-box;
 }
 
 #header-container {
@@ -42,17 +47,19 @@
 }
 
 #submit-button {
-    position: absolute;
     height: 50px;
-    top: 15px;
     width: 150px;
-    right: 25px;
+    flex-shrink: 0;
+}
+
+#hint-button {
+    height: 50px;
+    width: 50px;
+    flex-shrink: 0;
 }
 
 #guess-input {
-    position: absolute;
-    width: 250px;
-    top: 15px;
     height: 50px;
-    left: 25px;
+    flex: 1;
+    min-width: 0;
 }

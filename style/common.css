@@ -246,6 +246,12 @@ body {
     font-size: 24px;
 }
 
+#hint-button {
+    cursor: pointer;
+    font-size: 24px;
+    font-weight: bold;
+}
+
 #guess-input {
     font-size: 20px;
 }
