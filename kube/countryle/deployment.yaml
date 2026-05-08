@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: capitale
+  name: countryle
   labels:
-    app: capitale
+    app: countryle
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
-      app: capitale
+      app: countryle
   template:
     metadata:
       labels:
-        app: capitale
+        app: countryle
     spec:
       containers:
-      - name: capitale
-        image: kingbrady/capitale:1.0.1
+      - name: countryle
+        image: kingbrady/countryle:1.0.3
         ports:
         - containerPort: 80

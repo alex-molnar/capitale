@@ -84,6 +84,25 @@ class Capital:
 {self.latitude}
 {self.longitude}
 '''
+    
+class Country(Capital):
+    def __init__(self, concap: Concap, gist: Gist):
+        super().__init__(concap, gist)
+        self.country = concap.CountryName
+
+    def asJson(self):
+        return f'''    "{self.country}": {{
+        "name": "{self.country}",
+        "hemisphere": "{self.hemisphere}",
+        "continent": "{self.continent}",
+        "population": {self.population},
+        "pretty_population": "{self.getPopulation()}",
+        "latitude": {self.latitude},
+        "longitude": {self.longitude}
+    }}'''
+
+    def __str__(self):
+        return super().__str__() + '\n' + self.country
 
 
 with open('concap.csv', 'r') as concap_f:
@@ -91,10 +110,12 @@ with open('concap.csv', 'r') as concap_f:
         concaps = {concap[1]: Concap(concap) for concap in reader(concap_f) if concap[0] != 'CountryName'}
         gists = {gist[1]: Gist(gist) for gist in reader(gist_f) if gist[0] != 'Country'}
         capitals = list()
+        countries = list()
 
         for (concap_k, concap_v) in concaps.items():
             if concap_k in gists:
                 capitals.append(Capital(concap_v, gists[concap_k]))
+                countries.append(Country(concap_v, gists[concap_k]))
             else:
                 print(f'{concap_k} ({concap_v.CountryName}) is in concap but not in gist')
 
@@ -104,20 +125,18 @@ with open('concap.csv', 'r') as concap_f:
             if gist_k not in concaps:
                 print(f'{gist_k} ({gist_v.Country}) is in gist but not in concap')
 
-                with open('src/data.js', 'w') as data_f:
-                    data_f.write("const capitals_data = {\n")
-                    data_f.write(',\n'.join(map(lambda c: c.asJson(), capitals)))
-                    data_f.write('\n}\n')
-                    data_f.write('\nconst capitals = Object.keys(capitals_data);\n')
+        shuffle(capitals)
+        shuffle(countries)
 
-                with open('src/random.js', 'w') as random_f:
-                    today = datetime.today() #.strftime('%Y-%m-%d')
-                    shuffle(capitals)
-                    random_f.write("const capitalForTheDay = {\n")
+        with open('src/capitale-data.js', 'w') as data_f:
+            data_f.write("const capitals_data = {\n")
+            data_f.write(',\n'.join(map(lambda c: c.asJson(), capitals)))
+            data_f.write('\n}\n')
+            data_f.write('\nconst capitals = Object.keys(capitals_data);\n')
 
-                    for (i, capital) in enumerate(capitals):
-                        date = (today + timedelta(days=i)).strftime('%Y-%m-%d')
-                        random_f.write(f'    "{date}": "{capital.name}",\n')
-
-                    random_f.write('}\n')
+        with open('src/countryle-data.js', 'w') as data_f:
+            data_f.write("const countries_data = {\n")
+            data_f.write(',\n'.join(map(lambda c: c.asJson(), countries)))
+            data_f.write('\n}\n')
+            data_f.write('\nconst countries = Object.keys(countries_data);\n')
 

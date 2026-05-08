@@ -1,0 +1,28 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  generation: 1
+  labels:
+    app.kubernetes.io/instance: countryle
+    app.kubernetes.io/name: countryle
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+  name: countryle
+  namespace: countryle
+spec:
+  ingressClassName: traefik
+  tls:
+    - hosts:
+        - countryle.kak.im
+      secretName: countryle-tls
+  rules:
+  - host: countryle.kak.im
+    http:
+      paths:
+      - backend:
+          service:
+            name: countryle
+            port:
+              number: 80
+        path: /
+        pathType: Prefix

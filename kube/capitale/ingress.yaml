@@ -5,10 +5,16 @@ metadata:
   labels:
     app.kubernetes.io/instance: capitale
     app.kubernetes.io/name: capitale
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
   name: capitale
   namespace: capitale
 spec:
   ingressClassName: traefik
+  tls:
+    - hosts:
+        - capitale.kak.im
+      secretName: capitale-tls
   rules:
   - host: capitale.kak.im
     http:
