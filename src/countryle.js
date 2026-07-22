@@ -2,6 +2,7 @@ let already_guessed = []
 let currentDate = new Date().toJSON().slice(0, 10);
 let todays_country_name = getRandomCountryForToday()
 let todays_country = countries_data[todays_country_name]
+document.title = `Countryle`
 
 function getRandomCountryForToday() {
   let seed = parseInt(currentDate.replaceAll("-", ""));
@@ -118,7 +119,15 @@ function submitGuess(e) {
     let guessInput = document.getElementById("guess-input")
     let guess = guessInput.value
     if (!countries.includes(guess)) {
-        alert("Please select a valid country from the suggestions")
+        let firstChoice = countries
+            .filter(country => !already_guessed.includes(country))
+            .find(country => country.toLowerCase().includes(guess.toLowerCase()))
+        if (firstChoice) {
+            guessInput.value = firstChoice
+            submitGuess(e)
+        } else {
+            alert("Please select a valid country from the suggestions")
+        }
     } else if (already_guessed.includes(guess)) {
         alert("You have already guessed this country")
     } else if (guess === todays_country.name) {

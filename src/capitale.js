@@ -2,6 +2,7 @@ let already_guessed = []
 let currentDate = new Date().toJSON().slice(0, 10);
 let todays_capital_name = getRandomCapitalForToday()
 let todays_capital = capitals_data[todays_capital_name]
+document.title = `Capitale`
 
 function getRandomCapitalForToday() {
   let seed = parseInt(currentDate.replaceAll("-", ""));
@@ -44,7 +45,7 @@ function searchForCapital(e) {
     let guess = e.target.value
     if (!capitals.includes(guess)) {
         let filteredCapitals = capitals
-            .filter(capital => capital.toLowerCase().includes(guess.toLowerCase()))
+            .filter(capital => capital.toLowerCase().startsWith(guess.toLowerCase()) || capital.toLowerCase().includes(`(${guess.toLowerCase()}`))
             .filter(capital => !already_guessed.includes(capital))
         document.getElementById("suggestions").innerHTML = filteredCapitals.map(capital => `<option value="${capital}">`).join('')
     } else {
@@ -118,7 +119,15 @@ function submitGuess(e) {
     let guessInput = document.getElementById("guess-input")
     let guess = guessInput.value
     if (!capitals.includes(guess)) {
-        alert("Please select a valid city from the suggestions")
+        let firstChoice = capitals
+            .filter(capital => !already_guessed.includes(capital))
+            .find(capital => capital.toLowerCase().startsWith(guess.toLowerCase()) || capital.toLowerCase().includes(`(${guess.toLowerCase()}`))
+        if (firstChoice) {
+            guessInput.value = firstChoice
+            submitGuess(e)
+        } else {
+            alert("Please select a valid city from the suggestions")
+        }
     } else if (already_guessed.includes(guess)) {
         alert("You have already guessed this city")
     } else if (guess === todays_capital.name) {
