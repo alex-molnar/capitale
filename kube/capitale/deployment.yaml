@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
       - name: capitale
-        image: kingbrady/capitale:1.0.3
+        image: kingbrady/capitale:1.0.4
         ports:
         - containerPort: 80
