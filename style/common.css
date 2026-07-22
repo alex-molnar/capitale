@@ -27,6 +27,7 @@ body {
 
 #input-container {
     bottom: 0;
+    position: relative;
 }
 
 .header {
@@ -254,4 +255,76 @@ body {
 
 #guess-input {
     font-size: 20px;
+}
+
+/* Custom Suggestions Dropdown */
+#suggestions-container {
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    right: 0;
+    max-height: 200px;
+    overflow-y: auto;
+    background-color: #ffffff;
+    border: 2px solid #d1d1d1;
+    border-radius: 12px;
+    box-shadow: 0 -4px 16px 0 rgba(0,0,0,0.15);
+    display: none;
+    z-index: 1000;
+    margin-bottom: 8px;
+}
+
+#suggestions-container.show {
+    display: block;
+}
+
+.suggestion-item {
+    padding: 12px 18px;
+    cursor: pointer;
+    font-size: 16px;
+    color: #000000;
+    background-color: #ffffff;
+    border-bottom: 1px solid #e3e6ed;
+    transition: background-color 0.15s;
+}
+
+.suggestion-item:first-child {
+    border-radius: 10px 10px 0 0;
+}
+
+.suggestion-item:last-child {
+    border-bottom: none;
+    border-radius: 0 0 10px 10px;
+}
+
+.suggestion-item:only-child {
+    border-radius: 10px;
+}
+
+.suggestion-item:hover {
+    background-color: #f0f0f0;
+}
+
+.suggestion-item.selected {
+    background-color: #0b74de;
+    color: #ffffff;
+}
+
+/* Scrollbar styling for suggestions */
+#suggestions-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+#suggestions-container::-webkit-scrollbar-track {
+    background: #f0f0f0;
+    border-radius: 4px;
+}
+
+#suggestions-container::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+}
+
+#suggestions-container::-webkit-scrollbar-thumb:hover {
+    background: #a1a1a1;
 }

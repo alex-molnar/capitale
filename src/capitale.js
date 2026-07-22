@@ -31,25 +31,88 @@ function loadCapitale() {
         displayWinningGuessRow()
     } else {
         document.getElementById("guess-input").addEventListener("input", searchForCapital)
+        document.getElementById("guess-input").addEventListener("keydown", handleKeyboardNavigation)
         document.getElementById("guess-input").addEventListener("keypress", (e) => {
             if (e.key === "Enter") {
                 submitGuess(e)
             }
+        })
+        document.getElementById("guess-input").addEventListener("blur", () => {
+            setTimeout(hideSuggestions, 150) // Delay to allow click on suggestion
         })
         document.getElementById("submit-button").addEventListener("click", submitGuess)
         document.getElementById("hint-button").addEventListener("click", showSolution)
     }
 }
 
+let selectedSuggestionIndex = -1
+
 function searchForCapital(e) {
     let guess = e.target.value
-    if (!capitals.includes(guess)) {
+    let suggestionsContainer = document.getElementById("suggestions-container")
+    selectedSuggestionIndex = -1
+    
+    if (guess.length > 0 && !capitals.includes(guess)) {
         let filteredCapitals = capitals
             .filter(capital => capital.toLowerCase().startsWith(guess.toLowerCase()) || capital.toLowerCase().includes(`(${guess.toLowerCase()}`))
             .filter(capital => !already_guessed.includes(capital))
-        document.getElementById("suggestions").innerHTML = filteredCapitals.map(capital => `<option value="${capital}">`).join('')
+            .slice(0, 8) // Limit to 8 suggestions
+        
+        if (filteredCapitals.length > 0) {
+            suggestionsContainer.innerHTML = filteredCapitals.map((capital, index) => 
+                `<div class="suggestion-item" data-value="${capital}" data-index="${index}">${capital}</div>`
+            ).join('')
+            suggestionsContainer.classList.add("show")
+            
+            // Add click handlers to suggestions
+            suggestionsContainer.querySelectorAll(".suggestion-item").forEach(item => {
+                item.addEventListener("click", () => selectSuggestion(item.dataset.value))
+            })
+        } else {
+            hideSuggestions()
+        }
     } else {
-        document.getElementById("suggestions").innerHTML = ""
+        hideSuggestions()
+    }
+}
+
+function hideSuggestions() {
+    let suggestionsContainer = document.getElementById("suggestions-container")
+    suggestionsContainer.innerHTML = ""
+    suggestionsContainer.classList.remove("show")
+    selectedSuggestionIndex = -1
+}
+
+function selectSuggestion(value) {
+    document.getElementById("guess-input").value = value
+    hideSuggestions()
+}
+
+function handleKeyboardNavigation(e) {
+    let suggestionsContainer = document.getElementById("suggestions-container")
+    let items = suggestionsContainer.querySelectorAll(".suggestion-item")
+    
+    if (!suggestionsContainer.classList.contains("show") || items.length === 0) return
+    
+    if (e.key === "ArrowDown") {
+        e.preventDefault()
+        selectedSuggestionIndex = Math.min(selectedSuggestionIndex + 1, items.length - 1)
+        updateSelectedSuggestion(items)
+    } else if (e.key === "ArrowUp") {
+        e.preventDefault()
+        selectedSuggestionIndex = Math.max(selectedSuggestionIndex - 1, 0)
+        updateSelectedSuggestion(items)
+    } else if (e.key === "Escape") {
+        hideSuggestions()
+    }
+}
+
+function updateSelectedSuggestion(items) {
+    items.forEach((item, index) => {
+        item.classList.toggle("selected", index === selectedSuggestionIndex)
+    })
+    if (selectedSuggestionIndex >= 0) {
+        document.getElementById("guess-input").value = items[selectedSuggestionIndex].dataset.value
     }
 }
 
@@ -111,7 +174,7 @@ function showSolution() {
         localStorage.setItem(`capitale-${currentDate}`, JSON.stringify(already_guessed))
         displayWinningGuessRow()
         document.getElementById("guess-input").value = ""
-        document.getElementById("suggestions").innerHTML = ""
+        hideSuggestions()
     }
 }
 
@@ -141,7 +204,7 @@ function submitGuess(e) {
         displayNewGuessRow(guess)
         guessInput.value = ""
     }
-    document.getElementById("suggestions").innerHTML = ""
+    hideSuggestions()
 }
 
 window.onload = loadCapitale
