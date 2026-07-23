@@ -1,4 +1,4 @@
-const capitals_data = {
+const solutionsData = {
     "Libreville (Gabon)": {
         "name": "Libreville (Gabon)",
         "hemisphere": "Northern",
@@ -2035,4 +2035,4 @@ const capitals_data = {
     }
 }
 
-const capitals = Object.keys(capitals_data);
+const solutions = Object.keys(solutionsData);

@@ -1,4 +1,4 @@
-const countries_data = {
+const solutionsData = {
     "Nauru": {
         "name": "Nauru",
         "hemisphere": "Southern",
@@ -2035,4 +2035,4 @@ const countries_data = {
     }
 }
 
-const countries = Object.keys(countries_data);
+const solutions = Object.keys(solutionsData);

@@ -1,36 +1,39 @@
-let already_guessed = []
+let gameTitle = PARAM_GAME_TITLE
+let alreadyGuessed = [] 
 let currentDate = new Date().toJSON().slice(0, 10);
-let todays_country_name = getRandomCountryForToday()
-let todays_country = countries_data[todays_country_name]
-document.title = `Countryle`
+let todaysSolutionName = getRandomSolutionForToday()
+let todaysSolution = solutionsData[todaysSolutionName]
+let selectedSuggestionIndex = -1
 
-function getRandomCountryForToday() {
+function getRandomSolutionForToday() {
   let seed = parseInt(currentDate.replaceAll("-", ""));
   // LCG using GCC's constants
   m = 0x80000000; // 2**31;
   a = 1103515245;
   c = 12345;
 
-  return countries[Math.floor((((a * seed + c) % m) / m) * countries.length)]
+  return solutions[Math.floor((((a * seed + c) % m) / m) * solutions.length)]
 }
 
-function getAlreadyGuessedToday(date) {
-    if (localStorage.getItem(`countryle-${date}`) != null) {
-        already_guessed = JSON.parse(localStorage.getItem(`countryle-${date}`))
+function getAlreadyGuessedToday() {
+    if (localStorage.getItem(`${gameTitle}-${currentDate}`) != null) {
+        alreadyGuessed = JSON.parse(localStorage.getItem(`${gameTitle}-${currentDate}`))
     } else {
         localStorage.clear()
-        already_guessed = []
-        localStorage.setItem(`countryle-${date}`, JSON.stringify(already_guessed))
+        alreadyGuessed = []
+        localStorage.setItem(`${gameTitle}-${currentDate}`, JSON.stringify(alreadyGuessed))
     }
 }
 
-function loadCountry() {
-    getAlreadyGuessedToday(currentDate)
-    already_guessed.filter(guess => guess !== todays_country_name).forEach((guess, index) => displayNewGuessRow(guess, index + 1))
-    if (already_guessed.includes(todays_country_name)) {
+function loadGame() {
+    getAlreadyGuessedToday()
+    alreadyGuessed
+        .filter(guess => guess !== todaysSolutionName)
+        .forEach((guess, index) => displayNewGuessRow(guess, index + 1))
+    if (alreadyGuessed.includes(todaysSolutionName)) {
         displayWinningGuessRow()
     } else {
-        document.getElementById("guess-input").addEventListener("input", searchForCountry)
+        document.getElementById("guess-input").addEventListener("input", searchForSolution)
         document.getElementById("guess-input").addEventListener("keydown", handleKeyboardNavigation)
         document.getElementById("guess-input").addEventListener("keypress", (e) => {
             if (e.key === "Enter") {
@@ -45,22 +48,20 @@ function loadCountry() {
     }
 }
 
-let selectedSuggestionIndex = -1
-
-function searchForCountry(e) {
+function searchForSolution(e) {
     let guess = e.target.value
     let suggestionsContainer = document.getElementById("suggestions-container")
     selectedSuggestionIndex = -1
     
-    if (guess.length > 0 && !countries.includes(guess)) {
-        let filteredCountries = countries
-            .filter(country => country.toLowerCase().startsWith(guess.toLowerCase().trim()) || country.toLowerCase().includes(`(${guess.toLowerCase().trim()}`))
-            .filter(country => !already_guessed.includes(country))
+    if (guess.length > 0 && !solutions.includes(guess)) {
+        let filteredSolutions = solutions
+            .filter(solution => solution.toLowerCase().startsWith(guess.toLowerCase().trim()) || solution.toLowerCase().includes(`(${guess.toLowerCase().trim()}`))
+            .filter(solution => !alreadyGuessed.includes(solution))
             .slice(0, 8) // Limit to 8 suggestions
         
-        if (filteredCountries.length > 0) {
-            suggestionsContainer.innerHTML = filteredCountries.map((country, index) => 
-                `<div class="suggestion-item" data-value="${country}" data-index="${index}">${country}</div>`
+        if (filteredSolutions.length > 0) {
+            suggestionsContainer.innerHTML = filteredSolutions.map((solution, index) => 
+                `<div class="suggestion-item" data-value="${solution}" data-index="${index}">${solution}</div>`
             ).join('')
             suggestionsContainer.classList.add("show")
             
@@ -124,19 +125,19 @@ function makeScrollable(div) {
     div.scrollTop = div.scrollHeight
 }
 
-function displayNewGuessRow(guess, no = already_guessed.length) {
-    let guessed_country = countries_data[guess]
+function displayNewGuessRow(guess, no = alreadyGuessed.length) {
+    let guessedSolution = solutionsData[guess]
 
-    let distance = mathDistance(guessed_country.latitude, guessed_country.longitude, todays_country.latitude, todays_country.longitude)
-    let direction = getDirectionClass(Math.atan2(guessed_country.longitude - todays_country.longitude, guessed_country.latitude - todays_country.latitude) * 180 / Math.PI)
+    let distance = mathDistance(guessedSolution.latitude, guessedSolution.longitude, todaysSolution.latitude, todaysSolution.longitude)
+    let direction = getDirectionClass(Math.atan2(guessedSolution.longitude - todaysSolution.longitude, guessedSolution.latitude - todaysSolution.latitude) * 180 / Math.PI)
 
     let formattedDiff = formatDiff({
-        hemisphereClass: guessed_country.hemisphere === todays_country.hemisphere ? "good" : "bad",
-        hemisphere: guessed_country.hemisphere,
-        continentClass: guessed_country.continent === todays_country.continent ? "good" : "bad",
-        continent: guessed_country.continent,
-        populationClass: guessed_country.pretty_population === todays_country.pretty_population ? "good" : getPopulationClass(guessed_country.population, todays_country.population),
-        population: guessed_country.pretty_population,
+        hemisphereClass: guessedSolution.hemisphere === todaysSolution.hemisphere ? "good" : "bad",
+        hemisphere: guessedSolution.hemisphere,
+        continentClass: guessedSolution.continent === todaysSolution.continent ? "good" : "bad",
+        continent: guessedSolution.continent,
+        populationClass: guessedSolution.pretty_population === todaysSolution.pretty_population ? "good" : getPopulationClass(guessedSolution.population, todaysSolution.population),
+        population: guessedSolution.pretty_population,
         distanceClass: distance.distanceClass, 
         distance: `${distance.distance} km`, 
         directionClass: direction.directionClass,
@@ -145,17 +146,17 @@ function displayNewGuessRow(guess, no = already_guessed.length) {
     })
     document.getElementById("guesses-container").innerHTML += formattedDiff
 
-    if(already_guessed.length > 4) {
+    if(alreadyGuessed.length > 4) {
         let scroller = document.getElementById("guesses-container")
         makeScrollable(scroller)
     }
 }
 
 function displayWinningGuessRow() {
-    let formattedDiff = formatWinningDiff(todays_country, already_guessed.length)
+    let formattedDiff = formatWinningDiff(todaysSolution, alreadyGuessed.length)
     document.getElementById("guesses-container").innerHTML += formattedDiff
     
-    if(already_guessed.length > 4) {
+    if(alreadyGuessed.length > 4) {
         let scroller = document.getElementById("guesses-container")
         makeScrollable(scroller)
     }
@@ -169,9 +170,9 @@ function displayWinningGuessRow() {
 }
 
 function showSolution() {
-    if (!already_guessed.includes(todays_country_name)) {
-        already_guessed.push(todays_country_name)
-        localStorage.setItem(`countryle-${currentDate}`, JSON.stringify(already_guessed))
+    if (!alreadyGuessed.includes(todaysSolutionName)) {
+        alreadyGuessed.push(todaysSolutionName)
+        localStorage.setItem(`${gameTitle}-${currentDate}`, JSON.stringify(alreadyGuessed))
         displayWinningGuessRow()
         document.getElementById("guess-input").value = ""
         hideSuggestions()
@@ -181,30 +182,31 @@ function showSolution() {
 function submitGuess(e) {
     let guessInput = document.getElementById("guess-input")
     let guess = guessInput.value
-    if (!countries.includes(guess)) {
-        let firstChoice = countries
-            .filter(country => !already_guessed.includes(country))
-            .find(country => country.toLowerCase().startsWith(guess.toLowerCase().trim()) || country.toLowerCase().includes(`(${guess.toLowerCase().trim()}`))
+    if (!solutions.includes(guess)) {
+        let firstChoice = solutions
+            .filter(solution => !alreadyGuessed.includes(solution))
+            .find(solution => solution.toLowerCase().startsWith(guess.toLowerCase().trim()) || solution.toLowerCase().includes(`(${guess.toLowerCase().trim()}`))
         if (firstChoice && guess.toLowerCase().trim().length > 0) {
-            guessInput.value = firstChoice
+            guessInput.value = firstChoice.trim()
             submitGuess(e)
         } else if (guess.toLowerCase().trim().length > 0) {
-            alert("Please select a valid country from the suggestions")
+            alert(`Please select a valid ${gameTitle.unLe()} from the suggestions`)
         }
-    } else if (already_guessed.includes(guess)) {
-        alert("You have already guessed this country")
-    } else if (guess === todays_country.name) {
-        already_guessed.push(guess)
-        localStorage.setItem(`countryle-${currentDate}`, JSON.stringify(already_guessed))
+    } else if (alreadyGuessed.includes(guess)) {
+        alert(`You have already guessed this ${gameTitle.unLe()}`)
+    } else if (guess === todaysSolution.name) {
+        alreadyGuessed.push(guess)
+        localStorage.setItem(`${gameTitle}-${currentDate}`, JSON.stringify(alreadyGuessed))
         displayWinningGuessRow()
         guessInput.value = ""
     } else {
-        already_guessed.push(guess)
-        localStorage.setItem(`countryle-${currentDate}`, JSON.stringify(already_guessed))
+        alreadyGuessed.push(guess)
+        localStorage.setItem(`${gameTitle}-${currentDate}`, JSON.stringify(alreadyGuessed))
         displayNewGuessRow(guess)
         guessInput.value = ""
     }
     hideSuggestions()
 }
 
-window.onload = loadCountry
+document.title = gameTitle.capitalize()
+window.onload = loadGame
