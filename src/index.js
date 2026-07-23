@@ -33,16 +33,19 @@ function loadGame() {
     if (alreadyGuessed.includes(todaysSolutionName)) {
         displayWinningGuessRow()
     } else {
-        document.getElementById("guess-input").addEventListener("input", searchForSolution)
-        document.getElementById("guess-input").addEventListener("keydown", handleKeyboardNavigation)
-        document.getElementById("guess-input").addEventListener("keypress", (e) => {
+        let guessInput = document.getElementById("guess-input")
+        guessInput.addEventListener("input", searchForSolution)
+        guessInput.addEventListener("keydown", handleKeyboardNavigation)
+        guessInput.addEventListener("keypress", (e) => {
             if (e.key === "Enter") {
                 submitGuess(e)
             }
         })
-        document.getElementById("guess-input").addEventListener("blur", () => {
+        guessInput.addEventListener("blur", () => {
             setTimeout(hideSuggestions, 150) // Delay to allow click on suggestion
         })
+        guessInput.focus()
+        guessInput.select()
         document.getElementById("submit-button").addEventListener("click", submitGuess)
         document.getElementById("hint-button").addEventListener("click", showSolution)
     }
