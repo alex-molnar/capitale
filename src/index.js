@@ -258,5 +258,5 @@ function submitGuess(e) {
     hideSuggestions()
 }
 
-document.title = gameTitle.capitalize()
+document.title = `${gameTitle.capitalize()} v2`
 window.onload = loadGame
