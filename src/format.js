@@ -14,6 +14,17 @@ guessTemplate = `
     <div class="guess-circle {8}" id="guess-direction">{9}</div>
 </div>`
 
+iframeTemplate = `
+<div class="solution-iframe-container">
+    <iframe 
+        src="https://mapy.com/en/turisticka?q={0}&frame=1" 
+        title="Solution details"
+        class="solution-iframe"
+        frameborder="0"
+        allowfullscreen>
+    </iframe>
+</div>`
+
 function formatDiff(diff) {
     return format(
         guessTemplate, 
@@ -46,6 +57,10 @@ function formatWinningDiff(diff, no) {
         "",
         `${no}. ${diff.name}`
     );
+}
+
+function formatIframe(name) {
+    return format(iframeTemplate, name);
 }
 
 Object.defineProperty(String.prototype, 'capitalize', {

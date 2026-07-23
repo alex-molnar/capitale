@@ -168,6 +168,8 @@ function displayWinningGuessRow(triggerConfetti = false) {
         setTimeout(() => newRow.classList.remove('new'), 1000)
     }
     
+    container.insertAdjacentHTML('beforeend', formatIframe(todaysSolutionName))
+    
     if(alreadyGuessed.length > 4) {
         let scroller = document.getElementById("guesses-container")
         makeScrollable(scroller)
