@@ -54,7 +54,7 @@ function searchForCountry(e) {
     
     if (guess.length > 0 && !countries.includes(guess)) {
         let filteredCountries = countries
-            .filter(country => country.toLowerCase().includes(guess.toLowerCase()))
+            .filter(country => country.toLowerCase().startsWith(guess.toLowerCase().trim()) || country.toLowerCase().includes(`(${guess.toLowerCase().trim()}`))
             .filter(country => !already_guessed.includes(country))
             .slice(0, 8) // Limit to 8 suggestions
         
@@ -184,11 +184,11 @@ function submitGuess(e) {
     if (!countries.includes(guess)) {
         let firstChoice = countries
             .filter(country => !already_guessed.includes(country))
-            .find(country => country.toLowerCase().includes(guess.toLowerCase()))
-        if (firstChoice) {
+            .find(country => country.toLowerCase().startsWith(guess.toLowerCase().trim()) || country.toLowerCase().includes(`(${guess.toLowerCase().trim()}`))
+        if (firstChoice && guess.toLowerCase().trim().length > 0) {
             guessInput.value = firstChoice
             submitGuess(e)
-        } else {
+        } else if (guess.toLowerCase().trim().length > 0) {
             alert("Please select a valid country from the suggestions")
         }
     } else if (already_guessed.includes(guess)) {

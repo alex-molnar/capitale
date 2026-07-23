@@ -54,7 +54,7 @@ function searchForCapital(e) {
     
     if (guess.length > 0 && !capitals.includes(guess)) {
         let filteredCapitals = capitals
-            .filter(capital => capital.toLowerCase().startsWith(guess.toLowerCase()) || capital.toLowerCase().includes(`(${guess.toLowerCase()}`))
+            .filter(capital => capital.toLowerCase().startsWith(guess.toLowerCase().trim()) || capital.toLowerCase().includes(`(${guess.toLowerCase().trim()}`))
             .filter(capital => !already_guessed.includes(capital))
             .slice(0, 8) // Limit to 8 suggestions
         
@@ -184,11 +184,11 @@ function submitGuess(e) {
     if (!capitals.includes(guess)) {
         let firstChoice = capitals
             .filter(capital => !already_guessed.includes(capital))
-            .find(capital => capital.toLowerCase().startsWith(guess.toLowerCase()) || capital.toLowerCase().includes(`(${guess.toLowerCase()}`))
-        if (firstChoice) {
+            .find(capital => capital.toLowerCase().startsWith(guess.toLowerCase().trim()) || capital.toLowerCase().includes(`(${guess.toLowerCase().trim()}`))
+        if (firstChoice && guess.toLowerCase().trim().length > 0) {
             guessInput.value = firstChoice
             submitGuess(e)
-        } else {
+        } else if (guess.toLowerCase().trim().length > 0) {
             alert("Please select a valid city from the suggestions")
         }
     } else if (already_guessed.includes(guess)) {
