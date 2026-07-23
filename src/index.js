@@ -144,7 +144,13 @@ function displayNewGuessRow(guess, no = alreadyGuessed.length) {
         direction: direction.direction,
         guess: `${no}. ${guess}`
     })
-    document.getElementById("guesses-container").innerHTML += formattedDiff
+    let container = document.getElementById("guesses-container")
+    container.insertAdjacentHTML('beforeend', formattedDiff)
+    let newRow = container.lastElementChild
+    if (newRow && newRow.classList.contains('guess-row')) {
+        newRow.classList.add('new')
+        setTimeout(() => newRow.classList.remove('new'), 1000)
+    }
 
     if(alreadyGuessed.length > 4) {
         let scroller = document.getElementById("guesses-container")
@@ -154,7 +160,13 @@ function displayNewGuessRow(guess, no = alreadyGuessed.length) {
 
 function displayWinningGuessRow(triggerConfetti = false) {
     let formattedDiff = formatWinningDiff(todaysSolution, alreadyGuessed.length)
-    document.getElementById("guesses-container").innerHTML += formattedDiff
+    let container = document.getElementById("guesses-container")
+    container.insertAdjacentHTML('beforeend', formattedDiff)
+    let newRow = container.lastElementChild
+    if (newRow && newRow.classList.contains('guess-row')) {
+        newRow.classList.add('new')
+        setTimeout(() => newRow.classList.remove('new'), 1000)
+    }
     
     if(alreadyGuessed.length > 4) {
         let scroller = document.getElementById("guesses-container")

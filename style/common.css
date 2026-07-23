@@ -80,6 +80,46 @@ body {
     justify-items: center;
 }
 
+.guess-row.new {
+    animation: row-slide-in 0.5s ease-out forwards;
+}
+
+.guess-row.new .guess-circle {
+    opacity: 0;
+    animation: circle-pop-in 0.4s ease-out forwards;
+}
+
+.guess-row.new .guess-circle:nth-child(1) { animation-delay: 0.1s; }
+.guess-row.new .guess-circle:nth-child(2) { animation-delay: 0.2s; }
+.guess-row.new .guess-circle:nth-child(3) { animation-delay: 0.3s; }
+.guess-row.new .guess-circle:nth-child(4) { animation-delay: 0.4s; }
+.guess-row.new .guess-circle:nth-child(5) { animation-delay: 0.5s; }
+
+@keyframes row-slide-in {
+    0% {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes circle-pop-in {
+    0% {
+        opacity: 0;
+        transform: scale(0.3);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
 .guess-header {
     font-weight: 600;
     color: #666;
