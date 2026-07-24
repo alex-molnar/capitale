@@ -82,7 +82,7 @@ Faroe Islands,Torshavn,62,-6.766667,FO,Europe
 Fiji,Suva,-18.1333333333333,178.416667,FJ,Australia
 Finland,Helsinki,60.1666666666667,24.933333,FI,Europe
 France,Paris,48.8666666666667,2.333333,FR,Europe
-French Guiana,Cayenne,4.9333,-52.3333,57506,,North America
+French Guiana,Cayenne,4.9333,-52.3333,,South America
 French Polynesia,Papeete,-17.5333333333333,-149.566667,PF,Australia
 Gabon,Libreville,0.383333333333333,9.45,GA,Africa
 The Gambia,Banjul,13.45,-16.566667,GM,Africa
@@ -241,7 +241,7 @@ Zambia,Lusaka,-15.4166666666667,28.283333,ZM,Africa
 Zimbabwe,Harare,-17.8166666666667,31.033333,ZW,Africa
 Antarctica,N/A,0,0,AQ,Antarctica
 Northern Cyprus,North Nicosia,35.183333,33.366667,NULL,Europe
-Hong Kong,Hong Kong,22.2796,114.1887,7428887,HK,Asia
+Hong Kong,Hong Kong,22.2796,114.1887,HK,Asia
 Heard Island and McDonald Islands,N/A,0,0,HM,Antarctica
 British Indian Ocean Territory,Diego Garcia,-7.3,72.4,IO,Africa
 Macau,N/A,0,0,MO,Asia
