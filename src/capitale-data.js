@@ -11,7 +11,7 @@ const solutionsData = {
     "Cayenne (French Guiana)": {
         "name": "Cayenne (French Guiana)",
         "hemisphere": "Northern",
-        "continent": "",
+        "continent": "South America",
         "population": 57506,
         "pretty_population": "58k",
         "latitude": 4.9333,
@@ -722,7 +722,7 @@ const solutionsData = {
     "Hong Kong (Hong Kong)": {
         "name": "Hong Kong (Hong Kong)",
         "hemisphere": "Northern",
-        "continent": "HK",
+        "continent": "Asia",
         "population": 7428887,
         "pretty_population": "7m",
         "latitude": 22.2796,
@@ -2032,6 +2032,24 @@ const solutionsData = {
         "pretty_population": "448k",
         "latitude": -35.2835,
         "longitude": 149.1281
+    },
+    "Napoli (The Kingdom of the Two Sicilies)": {
+        "name": "Napoli (The Kingdom of the Two Sicilies)",
+        "hemisphere": "Northern",
+        "continent": "Europe",
+        "population": 962003,
+        "pretty_population": "962k",
+        "latitude": 40.8518,
+        "longitude": 14.2681
+    },
+    "Barcelona (Catalunya)": {
+        "name": "Barcelona (Catalunya)",
+        "hemisphere": "Northern",
+        "continent": "Europe",
+        "population": 1620343,
+        "pretty_population": "1.6m",
+        "latitude": 41.3851,
+        "longitude": 2.1734
     }
 }
 

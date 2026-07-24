@@ -983,7 +983,7 @@ const solutionsData = {
     "French Guiana": {
         "name": "French Guiana",
         "hemisphere": "Northern",
-        "continent": "",
+        "continent": "South America",
         "population": 57506,
         "pretty_population": "58k",
         "latitude": 4.9333,
@@ -1235,7 +1235,7 @@ const solutionsData = {
     "Hong Kong": {
         "name": "Hong Kong",
         "hemisphere": "Northern",
-        "continent": "HK",
+        "continent": "Asia",
         "population": 7428887,
         "pretty_population": "7m",
         "latitude": 22.2796,
@@ -2032,6 +2032,15 @@ const solutionsData = {
         "pretty_population": "584k",
         "latitude": 42.0,
         "longitude": 21.4333
+    },
+    "Catalunya": {
+        "name": "Catalunya",
+        "hemisphere": "Northern",
+        "continent": "Europe",
+        "population": 1620343,
+        "pretty_population": "1.6m",
+        "latitude": 41.3851,
+        "longitude": 2.1734
     }
 }
 
