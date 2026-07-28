@@ -17,7 +17,8 @@ on:
 
 env:
   REGISTRY: docker.io
-  IMAGE_NAME: kingbrady/capitale
+  IMAGE_NAME_CAPITALE: kingbrady/capitale
+  IMAGE_NAME_COUNTRYLE: kingbrady/countryle
 
 jobs:
   build-and-deploy:
@@ -43,23 +44,41 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push
+      - name: Build and push Capitale
         uses: docker/build-push-action@v6
         with:
           context: .
           platforms: linux/amd64,linux/arm64
           push: true
           tags: |
-            ${{ env.IMAGE_NAME }}:${{ steps.version.outputs.VERSION }}
-            ${{ env.IMAGE_NAME }}:latest
+            ${{ env.IMAGE_NAME_CAPITALE }}:${{ steps.version.outputs.VERSION }}
+            ${{ env.IMAGE_NAME_CAPITALE }}:latest
           build-args: |
             FLAVOUR=capitale
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      - name: Update deployment image tag
+      - name: Update capitale deployment image tag
         run: |
           sed -i "s|image: kingbrady/capitale:.*|image: kingbrady/capitale:${{ steps.version.outputs.VERSION }}|" kube/capitale/deployment.yaml
+
+      - name: Build and push Countryle
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: |
+            ${{ env.IMAGE_NAME_COUNTRYLE }}:${{ steps.version.outputs.VERSION }}
+            ${{ env.IMAGE_NAME_COUNTRYLE }}:latest
+          build-args: |
+            FLAVOUR=countryle
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Update countryle deployment image tag
+        run: |
+          sed -i "s|image: kingbrady/countryle:.*|image: kingbrady/countryle:${{ steps.version.outputs.VERSION }}|" kube/countryle/deployment.yaml
 
       - name: Set up kubectl
         uses: azure/setup-kubectl@v4
@@ -74,6 +93,8 @@ jobs:
         run: |
           kubectl apply -f kube/capitale/deployment.yaml
           kubectl rollout status deployment/capitale -n capitale --timeout=120s
+          kubectl apply -f kube/countryle/deployment.yaml
+          kubectl rollout status deployment/countryle -n countryle --timeout=120s
 
       - name: Cleanup kubeconfig
         if: always()
