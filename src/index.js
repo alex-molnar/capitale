@@ -26,6 +26,7 @@ function getAlreadyGuessedToday() {
 }
 
 function loadGame() {
+    document.getElementById("game-title").textContent = gameTitle.capitalize()
     getAlreadyGuessedToday()
     alreadyGuessed
         .filter(guess => guess !== todaysSolutionName)
