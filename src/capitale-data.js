@@ -2050,6 +2050,15 @@ const solutionsData = {
         "pretty_population": "1.6m",
         "latitude": 41.3851,
         "longitude": 2.1734
+    },
+    "Belfast (Northern Ireland)": {
+        "name": "Belfast (Northern Ireland)",
+        "hemisphere": "Northern",
+        "continent": "Europe",
+        "population": 333871,
+        "pretty_population": "334k",
+        "latitude": 54.5973,
+        "longitude": -5.9301
     }
 }
 

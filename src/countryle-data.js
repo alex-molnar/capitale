@@ -2041,6 +2041,15 @@ const solutionsData = {
         "pretty_population": "1.6m",
         "latitude": 41.3851,
         "longitude": 2.1734
+    },
+    "Northern Ireland": {
+        "name": "Northern Ireland",
+        "hemisphere": "Northern",
+        "continent": "Europe",
+        "population": 1885400,
+        "pretty_population": "1.9m",
+        "latitude": 54.6079,
+        "longitude": -5.9264
     }
 }
 
