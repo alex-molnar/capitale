@@ -1,11 +1,14 @@
 import { capitalize, unLe } from 'https://assets.kak.im/api/javascript/stringUtils.js'
 import { getRandomSelectionForToday, getItemForToday, getDirection, mathDistance } from 'https://assets.kak.im/api/javascript/mathHelpers.js'
 import { format } from 'https://assets.kak.im/api/javascript/stringUtils.js'
+import { loadGame } from 'https://assets.kak.im/api/javascript/gameHandler.js'
 
 let five_mil = 5000000
 let mil = 1000000
 let ten_k = 10000
 let k = 1000
+
+let noOfGuesses = 0
 
 let gameTitle = PARAM_GAME_TITLE
 let alreadyGuessed = [] 
@@ -89,108 +92,18 @@ function getPopulationClass(guessed_population, todays_population) {
     }
 }
 
-function loadGame() {
-    document.getElementById("game-title").textContent = gameTitle.capitalize()
-    alreadyGuessed = getItemForToday(gameTitle, alreadyGuessed)
-    alreadyGuessed
-        .filter(guess => guess !== todaysSolutionName)
-        .forEach((guess, index) => displayNewGuessRow(guess, index + 1))
-    if (alreadyGuessed.includes(todaysSolutionName)) {
-        displayWinningGuessRow()
+function displayRowsCallback(guessName, rowNumber, initial) {
+    noOfGuesses = rowNumber
+    if (guessName === todaysSolutionName) {
+        displayWinningGuessRow(noOfGuesses, true)
     } else {
-        let guessInput = document.getElementById("guess-input")
-        guessInput.addEventListener("input", searchForSolution)
-        guessInput.addEventListener("keydown", handleKeyboardNavigation)
-        guessInput.addEventListener("keypress", (e) => {
-            if (e.key === "Enter") {
-                submitGuess(e)
-            }
-        })
-        guessInput.addEventListener("blur", () => {
-            setTimeout(hideSuggestions, 150) // Delay to allow click on suggestion
-        })
-        guessInput.focus()
-        guessInput.select()
-        document.getElementById("submit-button").addEventListener("click", submitGuess)
-        document.getElementById("hint-button").addEventListener("click", showSolution)
+        displayNewGuessRow(guessName, rowNumber)
     }
 }
 
-function searchForSolution(e) {
-    let guess = e.target.value
-    let suggestionsContainer = document.getElementById("suggestions-container")
-    selectedSuggestionIndex = -1
-    
-    if (guess.length > 0 && !solutions.includes(guess)) {
-        let filteredSolutions = solutions
-            .filter(solution => solution.toLowerCase().startsWith(guess.toLowerCase().trim()) || solution.toLowerCase().includes(`(${guess.toLowerCase().trim()}`))
-            .filter(solution => !alreadyGuessed.includes(solution))
-            .slice(0, 8) // Limit to 8 suggestions
-        
-        if (filteredSolutions.length > 0) {
-            suggestionsContainer.innerHTML = filteredSolutions.map((solution, index) => 
-                `<div class="suggestion-item" data-value="${solution}" data-index="${index}">${solution}</div>`
-            ).join('')
-            suggestionsContainer.classList.add("show")
-            
-            // Add click handlers to suggestions
-            suggestionsContainer.querySelectorAll(".suggestion-item").forEach(item => {
-                item.addEventListener("click", () => selectSuggestion(item.dataset.value))
-            })
-        } else {
-            hideSuggestions()
-        }
-    } else {
-        hideSuggestions()
-    }
-}
-
-function hideSuggestions() {
-    let suggestionsContainer = document.getElementById("suggestions-container")
-    suggestionsContainer.innerHTML = ""
-    suggestionsContainer.classList.remove("show")
-    selectedSuggestionIndex = -1
-}
-
-function selectSuggestion(value) {
-    document.getElementById("guess-input").value = value
-    hideSuggestions()
-}
-
-function handleKeyboardNavigation(e) {
-    let suggestionsContainer = document.getElementById("suggestions-container")
-    let items = suggestionsContainer.querySelectorAll(".suggestion-item")
-    
-    if (!suggestionsContainer.classList.contains("show") || items.length === 0) return
-    
-    if (e.key === "ArrowDown") {
-        e.preventDefault()
-        selectedSuggestionIndex = Math.min(selectedSuggestionIndex + 1, items.length - 1)
-        updateSelectedSuggestion(items)
-    } else if (e.key === "ArrowUp") {
-        e.preventDefault()
-        selectedSuggestionIndex = Math.max(selectedSuggestionIndex - 1, 0)
-        updateSelectedSuggestion(items)
-    } else if (e.key === "Escape") {
-        hideSuggestions()
-    }
-}
-
-function updateSelectedSuggestion(items) {
-    items.forEach((item, index) => {
-        item.classList.toggle("selected", index === selectedSuggestionIndex)
-    })
-    if (selectedSuggestionIndex >= 0) {
-        document.getElementById("guess-input").value = items[selectedSuggestionIndex].dataset.value
-    }
-}
-
-function makeScrollable(div) {
-    div.style.overflowY = "scroll"
-    div.style.paddingRight = "10px"
-    document.getElementById("header-container").style.paddingRight = "10px"
-    document.getElementById("input-container").style.paddingRight = "10px"
-    div.scrollTop = div.scrollHeight
+function onLoadGame() {
+    loadGame(gameTitle, todaysSolutionName, solutions, displayRowsCallback)
+    document.getElementById("hint-button").addEventListener("click", e => displayWinningGuessRow())
 }
 
 function getDistanceClass(distance) {
@@ -203,7 +116,7 @@ function getDistanceClass(distance) {
     }
 }
 
-function displayNewGuessRow(guess, no = alreadyGuessed.length) {
+function displayNewGuessRow(guess, no) {
     let guessedSolution = solutionsData[guess]
 
     let distance = mathDistance(guessedSolution.latitude, guessedSolution.longitude, todaysSolution.latitude, todaysSolution.longitude)
@@ -237,7 +150,7 @@ function displayNewGuessRow(guess, no = alreadyGuessed.length) {
 }
 
 function displayWinningGuessRow(triggerConfetti = false) {
-    let formattedDiff = formatWinningDiff(todaysSolution, alreadyGuessed.length)
+    let formattedDiff = formatWinningDiff(todaysSolution, noOfGuesses)
     let container = document.getElementById("guesses-container")
     container.insertAdjacentHTML('beforeend', formattedDiff)
     let newRow = container.lastElementChild
@@ -294,44 +207,5 @@ function launchConfetti() {
     setTimeout(() => container.innerHTML = '', 5000)
 }
 
-function showSolution() {
-    if (!alreadyGuessed.includes(todaysSolutionName)) {
-        alreadyGuessed.push(todaysSolutionName)
-        localStorage.setItem(`${gameTitle}-${currentDate}`, JSON.stringify(alreadyGuessed))
-        displayWinningGuessRow()
-        document.getElementById("guess-input").value = ""
-        hideSuggestions()
-    }
-}
-
-function submitGuess(e) {
-    let guessInput = document.getElementById("guess-input")
-    let guess = guessInput.value
-    if (!solutions.includes(guess)) {
-        let firstChoice = solutions
-            .filter(solution => !alreadyGuessed.includes(solution))
-            .find(solution => solution.toLowerCase().startsWith(guess.toLowerCase().trim()) || solution.toLowerCase().includes(`(${guess.toLowerCase().trim()}`))
-        if (firstChoice && guess.toLowerCase().trim().length > 0) {
-            guessInput.value = firstChoice.trim()
-            submitGuess(e)
-        } else if (guess.toLowerCase().trim().length > 0) {
-            alert(`Please select a valid ${gameTitle.unLe()} from the suggestions`)
-        }
-    } else if (alreadyGuessed.includes(guess)) {
-        alert(`You have already guessed this ${gameTitle.unLe()}`)
-    } else if (guess === todaysSolution.name) {
-        alreadyGuessed.push(guess)
-        localStorage.setItem(`${gameTitle}-${currentDate}`, JSON.stringify(alreadyGuessed))
-        displayWinningGuessRow(true)
-        guessInput.value = ""
-    } else {
-        alreadyGuessed.push(guess)
-        localStorage.setItem(`${gameTitle}-${currentDate}`, JSON.stringify(alreadyGuessed))
-        displayNewGuessRow(guess)
-        guessInput.value = ""
-    }
-    hideSuggestions()
-}
-
 document.title = `${gameTitle.capitalize()} v2`
-window.onload = loadGame
+window.onload = onLoadGame
