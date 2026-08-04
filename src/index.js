@@ -1,33 +1,97 @@
+import { capitalize, unLe } from 'https://assets.kak.im/api/javascript/stringUtils.js'
+import { getRandomSelectionForToday, getItemForToday, getDirection, mathDistance } from 'https://assets.kak.im/api/javascript/mathHelpers.js'
+import { format } from 'https://assets.kak.im/api/javascript/stringUtils.js'
+
+let five_mil = 5000000
+let mil = 1000000
+let ten_k = 10000
+let k = 1000
+
 let gameTitle = PARAM_GAME_TITLE
 let alreadyGuessed = [] 
 let currentDate = new Date().toJSON().slice(0, 10);
-let todaysSolutionName = getRandomSolutionForToday()
+let todaysSolutionName = getRandomSelectionForToday(solutions, gameTitle)
 let todaysSolution = solutionsData[todaysSolutionName]
 let selectedSuggestionIndex = -1
 
-function getRandomSolutionForToday() {
-  let seed = parseInt(currentDate.replaceAll("-", ""));
-  // LCG using GCC's constants
-  m = 0x80000000; // 2**31;
-  a = 1103515245;
-  c = 12345;
+const guessTemplate = `
+<div class="guess-header">{10}</div>
+<div class="guess-row">
+    <div class="guess-circle {0}" id="guess-hemisphere">{1}</div>
+    <div class="guess-circle {2}" id="guess-continent">{3}</div>
+    <div class="guess-circle {4}" id="guess-population">{5}</div>
+    <div class="guess-circle {6}" id="guess-distance">{7}</div>
+    <div class="guess-circle {8}" id="guess-direction">{9}</div>
+</div>`
 
-  return solutions[Math.floor((((a * seed + c) % m) / m) * solutions.length)]
+function formatIframe(name) {
+    return format(`
+        <div class="solution-iframe-container">
+            <iframe 
+                src="https://mapy.com/en/turisticka?q={0}&frame=1" 
+                title="Solution details"
+                class="solution-iframe"
+                frameborder="0"
+                allowfullscreen>
+            </iframe>
+        </div>`, 
+        name
+    );
 }
 
-function getAlreadyGuessedToday() {
-    if (localStorage.getItem(`${gameTitle}-${currentDate}`) != null) {
-        alreadyGuessed = JSON.parse(localStorage.getItem(`${gameTitle}-${currentDate}`))
+function formatDiff(diff) {
+    return format(
+        guessTemplate, 
+        diff.hemisphereClass, 
+        diff.hemisphere, 
+        diff.continentClass, 
+        diff.continent, 
+        diff.populationClass, 
+        diff.population, 
+        diff.distanceClass, 
+        diff.distance, 
+        `natural ${diff.directionClass}`, 
+        diff.direction,
+        diff.guess
+    );
+}
+
+function formatWinningDiff(diff, no) {
+    return format(
+        guessTemplate, 
+        "good", 
+        diff.hemisphere, 
+        "good", 
+        diff.continent, 
+        "good", 
+        diff.pretty_population,
+        "good",
+        "0 km",
+        "good",
+        "",
+        `${no}. ${diff.name}`
+    );
+}
+
+function getPopulationClass(guessed_population, todays_population) {
+    let direction = todays_population > guessed_population ? "north" : "south"
+
+    if (
+        (todays_population > five_mil && Math.abs(guessed_population - todays_population) < mil) ||
+        (todays_population > mil && Math.abs(guessed_population - todays_population) < 300 * k) ||
+        (todays_population > 100 * k && Math.abs(guessed_population - todays_population) < 100 * k) ||
+        (todays_population > ten_k && Math.abs(guessed_population - todays_population) < ten_k) ||
+        Math.abs(guessed_population - todays_population) < k
+    ) {
+        return `mid ${direction}`
     } else {
-        localStorage.clear()
-        alreadyGuessed = []
-        localStorage.setItem(`${gameTitle}-${currentDate}`, JSON.stringify(alreadyGuessed))
+        return `bad ${direction}`
     }
 }
 
 function loadGame() {
     document.getElementById("game-title").textContent = gameTitle.capitalize()
-    getAlreadyGuessedToday()
+    alreadyGuessed = getItemForToday(gameTitle, alreadyGuessed)
     alreadyGuessed
         .filter(guess => guess !== todaysSolutionName)
         .forEach((guess, index) => displayNewGuessRow(guess, index + 1))
@@ -129,11 +193,21 @@ function makeScrollable(div) {
     div.scrollTop = div.scrollHeight
 }
 
+function getDistanceClass(distance) {
+    if (distance < 200) {
+        return "good"
+    } else if (distance < 500) {
+        return "mid"
+    } else {
+        return "bad"
+    }
+}
+
 function displayNewGuessRow(guess, no = alreadyGuessed.length) {
     let guessedSolution = solutionsData[guess]
 
     let distance = mathDistance(guessedSolution.latitude, guessedSolution.longitude, todaysSolution.latitude, todaysSolution.longitude)
-    let direction = getDirectionClass(Math.atan2(guessedSolution.longitude - todaysSolution.longitude, guessedSolution.latitude - todaysSolution.latitude) * 180 / Math.PI)
+    let direction = getDirection(Math.atan2(guessedSolution.longitude - todaysSolution.longitude, guessedSolution.latitude - todaysSolution.latitude) * 180 / Math.PI)
 
     let formattedDiff = formatDiff({
         hemisphereClass: guessedSolution.hemisphere === todaysSolution.hemisphere ? "good" : "bad",
@@ -142,10 +216,10 @@ function displayNewGuessRow(guess, no = alreadyGuessed.length) {
         continent: guessedSolution.continent,
         populationClass: guessedSolution.pretty_population === todaysSolution.pretty_population ? "good" : getPopulationClass(guessedSolution.population, todaysSolution.population),
         population: guessedSolution.pretty_population,
-        distanceClass: distance.distanceClass, 
-        distance: `${distance.distance} km`, 
-        directionClass: direction.directionClass,
-        direction: direction.direction,
+        distanceClass: getDistanceClass(distance),
+        distance: `${distance} km`, 
+        directionClass: direction.direction,
+        direction: direction.directionShort,
         guess: `${no}. ${guess}`
     })
     let container = document.getElementById("guesses-container")
