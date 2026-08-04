@@ -3,6 +3,7 @@ import { getRandomSelectionForToday, getItemForToday, getDirection, mathDistance
 import { format } from 'https://assets.kak.im/api/javascript/stringUtils.js'
 import { loadGame } from 'https://assets.kak.im/api/javascript/gameHandler.js'
 import { launchConfetti } from 'https://assets.kak.im/api/javascript/animations.js'
+import { countryData, countryNames } from 'https://assets.kak.im/api/javascript/countryData.js'
 
 let five_mil = 5000000
 let mil = 1000000
@@ -11,12 +12,21 @@ let k = 1000
 
 let noOfGuesses = 0
 
+const getSolutionNameByGameTitle = {
+    'capitale': country => `${country.capital.name} (${country.country.name})`,
+    'countryle': country => country.country.name,
+}
+
+const getKeyByGameTitle = {
+    'capitale': country => country.replace(/.*\(/, "").replace(/\)/, ""),
+    'countryle': country => country,
+}
+
 let gameTitle = PARAM_GAME_TITLE
-let alreadyGuessed = [] 
-let currentDate = new Date().toJSON().slice(0, 10);
-let todaysSolutionName = getRandomSelectionForToday(solutions, gameTitle)
-let todaysSolution = solutionsData[todaysSolutionName]
-let selectedSuggestionIndex = -1
+let gameTitleUnLe = gameTitle.unLe()
+let todaysSolutionCountry = getRandomSelectionForToday(countryNames, gameTitle)
+let todaysSolution = countryData[todaysSolutionCountry][gameTitleUnLe]
+let todaysSolutionName = getSolutionNameByGameTitle[gameTitle](countryData[todaysSolutionCountry])
 
 const guessTemplate = `
 <div class="guess-header">{10}</div>
@@ -103,8 +113,8 @@ function displayRowsCallback(guessName, rowNumber, initial) {
 }
 
 function onLoadGame() {
-    loadGame(gameTitle, todaysSolutionName, solutions, displayRowsCallback)
-    document.getElementById("hint-button").addEventListener("click", e => displayWinningGuessRow())
+    loadGame(gameTitle, todaysSolutionName, Object.values(countryData).map(country => getSolutionNameByGameTitle[gameTitle](country)), displayRowsCallback)
+    document.getElementById("hint-button").addEventListener("click", e => displayWinningGuessRow(false))
 }
 
 function getDistanceClass(distance) {
@@ -117,8 +127,16 @@ function getDistanceClass(distance) {
     }
 }
 
+function makeScrollable(div) {
+    div.style.overflowY = "scroll"
+    div.style.paddingRight = "10px"
+    document.getElementById("header-container").style.paddingRight = "10px"
+    document.getElementById("input-container").style.paddingRight = "10px"
+    div.scrollTop = div.scrollHeight
+}
+
 function displayNewGuessRow(guess, no) {
-    let guessedSolution = solutionsData[guess]
+    let guessedSolution = countryData[getKeyByGameTitle[gameTitle](guess)][gameTitleUnLe]
 
     let distance = mathDistance(guessedSolution.latitude, guessedSolution.longitude, todaysSolution.latitude, todaysSolution.longitude)
     let direction = getDirection(Math.atan2(guessedSolution.longitude - todaysSolution.longitude, guessedSolution.latitude - todaysSolution.latitude) * 180 / Math.PI)
@@ -144,7 +162,7 @@ function displayNewGuessRow(guess, no) {
         setTimeout(() => newRow.classList.remove('new'), 1000)
     }
 
-    if(alreadyGuessed.length > 4) {
+    if(noOfGuesses > 4) {
         let scroller = document.getElementById("guesses-container")
         makeScrollable(scroller)
     }
@@ -162,7 +180,7 @@ function displayWinningGuessRow(triggerConfetti = false) {
     
     container.insertAdjacentHTML('beforeend', formatIframe(todaysSolutionName))
     
-    if(alreadyGuessed.length > 4) {
+    if(noOfGuesses > 4) {
         let scroller = document.getElementById("guesses-container")
         makeScrollable(scroller)
     }
